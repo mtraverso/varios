@@ -15,7 +15,29 @@ import commands
 """Copy Special exercise
 """
 
-# +++your code here+++
+def get_special_paths(dir):
+  files = os.listdir(dir)
+  filesStr = list()
+  for file in files:
+    if re.match(".*__.*__.*",file):
+      filesStr.append(file)
+  return filesStr
+
+
+def copyTo(dirFrom, to):
+  files = get_special_paths(dirFrom)
+  os.mkdir(to)  
+  for file in files:
+    shutil.copyfile(file,os.path.abspath(os.path.join(to,file)))
+
+def createzip(dirFrom, zipfile):
+  files = get_special_paths(dirFrom)
+  
+  cmd = 'zip '+zipfile+" "
+
+  for file in files:
+    cmd+= file+" "
+  (status,output) = commands.getstatusoutput(cmd)
 # Write functions and modify main() to call them
 
 
@@ -51,5 +73,12 @@ def main():
   # +++your code here+++
   # Call your functions
   
+  get_special_paths(args[0])
+  if todir != '':
+    copyTo(args[0],todir)
+
+  if tozip != '':
+    createzip(args[0], tozip)
+
 if __name__ == "__main__":
   main()

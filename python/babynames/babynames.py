@@ -40,8 +40,28 @@ def extract_names(filename):
   followed by the name-rank strings in alphabetical order.
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
-  # +++your code here+++
-  return
+  f = open(filename,'r')
+  year = ""
+  nameList = list()
+  for line in f:
+    yearMatch = re.search(r'Popularity\sin\s(\d\d\d\d)',line)
+    if yearMatch != None:
+      year = yearMatch.groups()[0]
+      nameList.append(year)
+    nameMatch = re.search(r'<td>(\d+)</td><td>(\w+)</td>\<td>(\w+)</td>',line)
+    if nameMatch != None:
+      nameList.append(nameMatch.groups()[1]+" "+nameMatch.groups()[0])
+      nameList.append(nameMatch.groups()[2]+" "+nameMatch.groups()[0])
+  sortedNameList = sorted(nameList)
+  
+  return sortedNameList
+
+def writeFile(filename,names):
+  f = open(filename+".summary",mode='w')
+  for name in names:
+    f.write(name)
+    f.write("\n")
+  f.close()
 
 
 def main():
@@ -49,7 +69,7 @@ def main():
   # Make a list of command line arguments, omitting the [0] element
   # which is the script itself.
   args = sys.argv[1:]
-
+  
   if not args:
     print 'usage: [--summaryfile] file [file ...]'
     sys.exit(1)
@@ -60,7 +80,12 @@ def main():
     summary = True
     del args[0]
 
-  # +++your code here+++
+  for i in args:
+    names = extract_names(i)
+    if summary:
+      writeFile(i, names)
+    else:
+      print names
   # For each filename, get the names, then either print the text output
   # or write it to a summary file
   
